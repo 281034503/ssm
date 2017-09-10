@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
-		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+   http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
 	default-lazy-init="true">
 
 	<description>Spring Configuration</description>
@@ -25,6 +22,7 @@
 		<property name="initialSize" value="1" />
 		<property name="minIdle" value="3" />
 		<property name="maxActive" value="50" />
+		<property name="autoCommit" value="true" />
 		<!-- 配置获取连接等待超时的时间 -->
 		<property name="maxWait" value="60000" />
 		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
@@ -45,26 +43,12 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 
-	<!-- 定义事务 -->
-	<bean id="transactionManager"
-		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
+	
+
+	<bean id="userDao" class="com.cheer.ssm.dao.UserDao">
+		<property name="jdbcTemplate" ref="jdbcTemplate">
+		</property>
 	</bean>
+	<bean id="loginService" class="com.cheer.ssm.service.LoginService" />
 
-	<!-- 配置 Annotation 驱动，扫描@Transactional注解的类定义事务 -->
-	<tx:annotation-driven transaction-manager="transactionManager"
-		proxy-target-class="true" />
-	<context:component-scan base-package="com.cheer.ssm.dao">
-		<context:include-filter type="annotation"
-			expression="org.springframework.stereotype.Service" />
-	</context:component-scan>
-	<context:component-scan base-package="com.cheer.ssm.service">
-		<context:include-filter type="annotation"
-			expression="org.springframework.stereotype.Service" />
-	</context:component-scan>
-
-	<!-- <bean id="userDao" class="com.cheer.ssm.dao.UserDao"> <property name="jdbcTemplate" 
-		ref="jdbcTemplate"> </property> </bean> <bean id="userDao" class="com.cheer.ssm.dao.UserLogDao"> 
-		<property name="jdbcTemplate" ref="jdbcTemplate"> </property> </bean> <bean 
-		id="loginService" class="com.cheer.ssm.service.LoginService" autowire="byType"/> -->
 </beans>	
